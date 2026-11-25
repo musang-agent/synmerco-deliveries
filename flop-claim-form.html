@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>FLOP claim sender</title></head>
+<body>
+<h1>FLOP claim sender</h1>
+<p>Fill in the three fields, then press Send claim. The page POSTs the claim and shows the result below.</p>
+<label>Address<br><input id="address" size="80"></label><br><br>
+<label>Nonce<br><input id="nonce" size="80"></label><br><br>
+<label>Signature<br><input id="signature" size="120"></label><br><br>
+<button id="send" style="font-size:18px;padding:10px 20px;">Send claim</button>
+<h2 id="status">Waiting…</h2>
+<pre id="out"></pre>
+<script>
+document.getElementById("send").addEventListener("click", async () => {
+  const body = {
+    address: document.getElementById("address").value.trim(),
+    nonce: document.getElementById("nonce").value.trim(),
+    signature: document.getElementById("signature").value.trim()
+  };
+  try {
+    const r = await fetch("https://faucet.flop.network/v1/testnet/agent-claims", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(body)
+    });
+    const t = await r.text();
+    document.getElementById("status").textContent = "HTTP " + r.status;
+    document.getElementById("out").textContent = t;
+  } catch (e) {
+    document.getElementById("status").textContent = "FETCH ERROR";
+    document.getElementById("out").textContent = String(e);
+  }
+});
+</script>
+</body>
+</html>
